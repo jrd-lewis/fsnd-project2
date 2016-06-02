@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block navlinks %}
+  {% if user %}
+  <li><a href="/new">New Post</a></li>
+  <li><a href="/logout">Logout</a></li>
+  {% else %}
+  <li><a href="/login">Login</a></li>
+  <li><a href="/register">Register</a></li>
+  {% endif %}
+{% endblock %}
+{% block content %}
+<div class="col-sm-8 col-md-7 col-md-offset-1">
+  {{post.render() | safe}}
+    <p>{{post._render_text | safe}}</p>
+    <p class="text-right">
+    {% if user %}
+      {% if not post.author == user.name %}
+        {% if like %}
+          <a class="btn btn-xs btn-danger" href="/unlike/?post={{post.key().id()}}">
+            <i class="fa fa-heart-o" aria-hidden="true"></i>
+            Unlike
+          </a>
+        {% else %}
+          <a class="btn btn-xs btn-info" href="/like/?post={{post.key().id()}}">
+            <i class="fa fa-heart" aria-hidden="true"></i>
+            Like
+          </a>
+        {% endif %}
+      {% else %}
+        <a class="btn btn-xs btn-info" href="/edit-post?id={{ post.key().id() }}">
+          <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+          Edit
+        </a>
+        <a class="btn btn-xs btn-danger" href="/delete-post?id={{ post.key().id() }}">
+          <i class="fa fa-ban" aria-hidden="true"></i>
+          Delete
+        </a>
+      {% endif %}
+    {% endif %}
+    </p>
+    <p class="text-right">
+      <strong><em>Share This Page</em></strong>
+      <br>
+      <a href="http://www.facebook.com/sharer.php?u=http://fsnd-blog.appspot.com/view-post?id={{ post.key().id() }}"
+        class="btn btn-xs btn-primary">
+        <i class="fa fa-facebook-official" aria-hidden="true"></i>
+        Share
+      </a>
+      <a href="https://plus.google.com/share?url=http://fsnd-blog.appspot.com/view-post?id={{ post.key().id() }}"
+        class="btn btn-xs btn-danger">
+        <i class="fa fa-google-plus-official" aria-hidden="true"></i>
+        Share
+      </a>
+      <a href="https://twitter.com/share?url=http://fsnd-blog.appspot.com/view-post?id={{ post.key().id() }}"
+        class="btn btn-xs btn-info">
+        <i class="fa fa-twitter" aria-hidden="true"></i>
+        Tweet
+      </a>
+    </p>
+  </article>
+  <hr>
+  <ul class="pager">
+    <li class="previous"><a href="/">&larr; Back to Posts</a></li>
+  </ul>
+  {% if user %}
+  <div class="well">
+    <h4 class="text-center">Leave a Comment</h4>
+    <form class="clearfix" method="post">
+      <div class="col-md-6 form-group text-right">
+        <label class="sr-only" for="user">User</label>
+        <input type="hidden" class="form-control" name="id" value="{{id}}">
+        <input type="text" class="form-control" name="user"
+          placeholder="{{user.name}}" disabled>
+      </div>
+      <div class="col-md-6 form-group text-right">
+        <label class="sr-only" for="email">Email</label>
+        <input type="text" class="form-control" name="email"
+          placeholder="Email" value="{{user.email}}" disabled>
+      </div>
+      <div class="col-md-12 form-group">
+        <label class="sr-only" for="comment">Comment</label>
+        <textarea class="form-control" name="comment"
+          placeholder="Comment"></textarea>
+      </div>
+      {% if error %}
+      <div class="col-md-12 form-group text-center error">
+        <strong>{{error}}</strong>
+      </div>
+      {% endif %}
+      <div class="col-xs-12 col-sm-4 form-group">
+        <button class="btn btn-block btn-primary" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+  {% else %}
+  <p>You must <a href="/login">login</a> to leave a comment.</p>
+  {% endif %}
+  <hr>
+  {% if comments %}
+    <ul class="list-unstyled" id="comments">
+    {% for c in comments %}
+    <li>
+      <div class="clearfix">
+        <img alt="{{c.author}}" src="{{c.avatar}}"
+          class="pull-left img-circle img-sm">
+        <h4 class="pull-left">
+          {{c.author}}
+        </h4>
+        <p class="pull-right">
+          {{c.created.strftime("%b %d, %Y, %I:%M %p")}}
+        </p>
+      </div>
+      <p><em>{{c.comment}}</em></p>
+      {% if user.name == c.author %}
+      <ul class="list-inline">
+        <li>
+          <a class="btn btn-xs btn-info" href="/edit-comment?id={{ c.key().id() }}">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            Edit
+          </a>
+        </li>
+        <li>
+          <a class="btn btn-xs btn-danger" href="/delete-comment?id={{ c.key().id() }}">
+            <i class="fa fa-ban" aria-hidden="true"></i>
+            Delete
+          </a>
+        </li>
+      </ul>
+      {% endif %}
+    </li>
+    {% endfor %}
+  {% else %}
+    {% if user %}
+      <p><em>Be the first to leave a comment.</em></p>
+    {% endif %}
+  {% endif %}
+</div>
+  <div class="hidden-xs col-sm-4 col-md-3">
+    <div class="panel panel-primary">
+      <div class="panel-heading text-center">
+        <h2 class="panel-title">Latest Posts</h2>
+      </div>
+      <ul class="list-group">
+      {% for p in posts %}
+        <li class="list-group-item">
+          <a href="view-post?id={{ p.key().id() }}">{{ p.subject }}</a>
+          by {{ p.author }}
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

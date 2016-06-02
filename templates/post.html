@@ -1,0 +1,40 @@
+<article>
+  <h2>{{p.subject}}</h2>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <ul class="list-inline">
+        <li>
+          <i class="fa fa-user" aria-hidden="true"></i> {{p.author}}
+        </li>
+        <li>
+          <i class="fa fa-calendar" aria-hidden="true"></i>
+            {{p.created.strftime("%b %#d, %Y")}}
+        </li>
+      </ul>
+    </div>
+    <div class="col-xs-12 col-sm-6 text-right-sm">
+      <ul class="list-inline">
+        <li>
+          <a href="/view-post?id={{ p.key().id() }}#comments">
+            <i class="fa fa-comments" aria-hidden="true"></i>
+              {{p.comments}}
+              {% if p.comments == 1 %}
+                Comment
+              {% else %}
+                Comments
+              {% endif %}
+          </a>
+        </li>
+        <li class="liked">
+          <i class="fa fa-heart" aria-hidden="true"></i>
+            {{p.likes}}
+            {% if p.likes == 1 %}
+              Like
+            {% else %}
+              Likes
+            {% endif %}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <hr>

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block navlinks %}
+  {% if user %}
+  <li><a href="/new">New Post</a></li>
+  <li><a href="/logout">Logout</a></li>
+  {% else %}
+  <li><a href="/login">Login</a></li>
+  <li><a href="/register">Register</a></li>
+  {% endif %}
+{% endblock %}
+{% block content %}
+  <div class="col-sm-8 col-md-7 col-md-offset-1">
+  {% for p in posts %}
+    {{ p.render() | safe }}
+      <p>{{p._render_text[:50] | safe}}</p>
+      <p class="text-right">
+        <a href="view-post?id={{ p.key().id() }}">
+          Continue Reading...
+        </a>
+      </p>
+    </article>
+    <br><br>
+  {% endfor %}
+  {% if not posts.get() >= 1 %}
+  <article>
+    <h2>No Posts Found</h2>
+  </article>
+  {% endif %}
+  </div>
+  <div class="hidden-xs col-sm-4 col-md-3">
+    <div class="panel panel-primary">
+      <div class="panel-heading text-center">
+        <h2 class="panel-title">Latest Posts</h2>
+      </div>
+      <ul class="list-group">
+      {% for p in posts %}
+        <li class="list-group-item">
+          <a href="view-post?id={{ p.key().id() }}">
+            {{ p.subject }}
+          </a>
+          by {{ p.author }}
+        </li>
+      {% endfor %}
+      {% if not posts.get() >= 1 %}
+       <li class="list-group-item">No Posts Found</li>
+      {% endif %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}
